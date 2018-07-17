@@ -116,7 +116,7 @@ router.post('/login', (req, res) => {
                     res.json({success: true, token: 'Bearer ' + token});
                 });
             } else {
-                errors.password = 'Password incorrect'
+                errors.password = 'Password incorrect';
                 return res.status(400).json(errors);
             }
         })
