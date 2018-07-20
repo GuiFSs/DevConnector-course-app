@@ -126,7 +126,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), async (req, res
             errors.handle = 'That handle already exists';
             return res.status(400).json(errors);
         }
-        profile = await new Profile(profileFields).save().exec();
+        profile = await new Profile(profileFields).save();
         res.json(profile);
     }
 });
@@ -187,6 +187,36 @@ router.delete('/experience/:exp_id', passport.authenticate('jwt', {session: fals
         // const removeIndex = profile.experience.map(item => item.id).includes(req.params.exp_id);
         // profile.experience.splice(removeIndex, 1);
         // await profile.save();
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+// @route  DELETE api/profile/education/:edu_i
+// @desc   Delete education from profile
+// @access Private
+router.delete('/education/:edu_id', passport.authenticate('jwt', {session: false}),  async (req, res) => {
+    try{
+        const profile = await Profile.findOneAndUpdate
+        (
+            {user: req.user.id},
+            {$pull: {education: {_id: req.params.edu_id}}},
+            {new: true}
+        );
+        res.json(profile);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+// @route  DELETE api/profile
+// @desc   Delete user and profile 
+// @access Private
+router.delete('/', passport.authenticate('jwt', {session: false}),  async (req, res) => {
+    try{
+        await Profile.findOneAndRemove({user: req.user.id});
+        await User.findOneAndRemove({_id: req.user.i});
+        res.json({success: true});
     } catch (err) {
         res.status(404).json(err);
     }
