@@ -215,7 +215,7 @@ router.delete('/education/:edu_id', passport.authenticate('jwt', {session: false
 router.delete('/', passport.authenticate('jwt', {session: false}),  async (req, res) => {
     try{
         await Profile.findOneAndRemove({user: req.user.id});
-        await User.findOneAndRemove({_id: req.user.i});
+        await User.findOneAndRemove({_id: req.user.id});
         res.json({success: true});
     } catch (err) {
         res.status(404).json(err);
